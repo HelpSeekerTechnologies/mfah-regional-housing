@@ -1438,16 +1438,241 @@
         .kpi-change.up { color: var(--teal-core); }
         .kpi-change.down { color: var(--danger); }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar { width: 220px; }
-            .charts-row { grid-template-columns: 1fr; }
+        /* Mobile menu toggle button */
+        .mobile-menu-btn {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(15,185,177,0.4);
+            background: transparent;
+            color: var(--aqua-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .mobile-menu-btn:hover { background: rgba(15,185,177,0.2); }
+        .mobile-menu-btn .material-symbols-outlined { font-size: 22px; }
+
+        /* Mobile sidebar overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(11,31,51,0.6);
+            z-index: 199;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
         }
 
+        /* Responsive — Tablet */
+        @media (max-width: 1024px) {
+            .charts-row { grid-template-columns: 1fr; }
+            .insights-grid { grid-template-columns: 1fr; }
+            .content { padding: 24px 24px; }
+            .section-progress { margin: -24px -24px 48px -24px; padding: 0 24px; }
+        }
+
+        /* Responsive — Mobile */
         @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .header { flex-direction: column; gap: 12px; }
-            .header-actions { width: 100%; justify-content: center; }
+            /* Header */
+            .header { padding: 10px 14px; gap: 8px; flex-wrap: wrap; }
+            .header-left { flex: 1; min-width: 0; }
+            .header-brand { gap: 8px; }
+            .header-brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+            .header-title-main { font-size: 0.92rem; }
+            .header-title-sub { font-size: 0.62rem; }
+            .header-actions { gap: 6px; }
+            .view-btn { padding: 6px 10px; font-size: 0.75rem; }
+            .export-btn { padding: 6px 10px; font-size: 0.75rem; }
+            .export-btn span:not(.material-symbols-outlined) { display: none; }
+            .home-btn { padding: 6px 10px; font-size: 0.75rem; }
+            .home-btn span:not(.material-symbols-outlined) { display: none; }
+            .mobile-menu-btn { display: flex; }
+
+            /* Sidebar as drawer */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 270px;
+                height: 100vh;
+                z-index: 200;
+                transition: left 0.3s ease;
+                padding-top: 16px;
+            }
+            .sidebar.mobile-open {
+                left: 0;
+            }
+
+            /* Content area */
+            .content {
+                max-width: 100%;
+                padding: 16px 14px;
+                scroll-padding-top: 50px;
+            }
+            .main-container { display: block; }
+
+            /* Section progress bar */
+            .section-progress {
+                margin: -16px -14px 32px -14px;
+                padding: 0 10px;
+            }
+            .progress-dot { padding: 10px 10px; font-size: 0.68rem; }
+
+            /* Section headers */
+            .section-header {
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 24px;
+                margin-bottom: 20px;
+            }
+            .section-title { font-size: 1.25rem; }
+            .selected-communities { justify-content: flex-start; }
+
+            /* Grids — stack on mobile */
+            .key-findings-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .regional-stats { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .mini-stats-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .severity-strip { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .charts-row { grid-template-columns: 1fr; gap: 16px; }
+            .insights-grid { grid-template-columns: 1fr; gap: 12px; }
+
+            /* Key findings cards */
+            .key-finding { padding: 16px 14px; border-radius: 10px; }
+            .finding-figure { font-size: 1.6rem; }
+            .finding-label { font-size: 0.6rem; }
+            .finding-context { font-size: 0.72rem; }
+
+            /* Regional summary */
+            .regional-summary { padding: 16px; margin-bottom: 16px; }
+            .regional-stat-value { font-size: 1.5rem; }
+
+            /* Charts */
+            .chart-container { padding: 14px; }
+            .chart-wrapper { height: 220px; }
+            .chart-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+            /* Tables — horizontal scroll */
+            .comparison-table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .comparison-table { min-width: 500px; }
+            .comparison-table th { padding: 10px 10px; font-size: 0.72rem; }
+            .comparison-table td { padding: 10px 10px; font-size: 0.8rem; }
+
+            /* Content groups */
+            .content-group { padding: 18px 14px 22px 14px; margin-bottom: 16px; }
+            .group-title { font-size: 0.95rem; }
+            .group-subtitle { padding-left: 0; font-size: 0.82rem; }
+            .group-header .material-symbols-outlined { font-size: 22px; }
+
+            /* Map */
+            #housingMap { height: 300px !important; }
+            #mapControls { flex-direction: column; align-items: flex-start !important; gap: 8px; }
+            .map-legend { max-width: 100%; min-width: unset; }
+            .map-layer-toggle { flex-wrap: wrap; }
+            .map-layer-btn { padding: 6px 10px; font-size: 0.68rem; }
+
+            /* Single community view */
+            .single-community-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px 18px;
+                gap: 14px;
+                border-radius: 12px;
+            }
+            .community-avatar { width: 48px; height: 48px; font-size: 1.2rem; border-radius: 10px; }
+            .community-info h2 { font-size: 1.15rem; }
+            .community-info p { font-size: 0.8rem; }
+
+            /* Executive sections */
+            .exec-section { margin-bottom: 24px; padding-bottom: 20px; }
+            .exec-section-head { padding: 10px 12px; border-radius: 10px; }
+            .exec-section-icon { width: 34px; height: 34px; border-radius: 8px; }
+            .exec-section-icon .material-symbols-outlined { font-size: 17px; }
+            .exec-section-title { font-size: 0.95rem; }
+            .exec-narrative { padding: 10px 14px; font-size: 0.85rem; }
+
+            /* Severity cards */
+            .severity-card { padding: 14px; border-radius: 10px; }
+            .severity-value { font-size: 1.4rem; }
+            .severity-label { font-size: 0.65rem; }
+            .severity-context { font-size: 0.7rem; }
+
+            /* Action cards */
+            .action-card { padding: 12px 14px; gap: 10px; }
+            .action-number { width: 24px; height: 24px; min-width: 24px; font-size: 0.7rem; }
+            .action-text { font-size: 0.82rem; }
+
+            /* Benchmark callout */
+            .benchmark-callout { font-size: 0.72rem; padding: 5px 12px; }
+
+            /* Section summary */
+            .section-summary { padding: 16px 18px; font-size: 0.85rem; }
+
+            /* Chart insight */
+            .chart-insight { padding: 12px 14px; font-size: 0.82rem; }
+
+            /* Welcome screen */
+            .welcome-hero { padding: 36px 14px 24px; }
+            .welcome-hero h1 { font-size: 1.5rem; }
+            .welcome-hero p { font-size: 0.9rem; }
+            .welcome-grid { grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 14px 20px; }
+            .welcome-card { padding: 20px 14px; border-radius: 10px; }
+            .welcome-card .material-symbols-outlined { font-size: 32px; }
+            .welcome-card-name { font-size: 1rem; }
+            .welcome-card-pop { font-size: 0.78rem; }
+            .welcome-compare-btn { padding: 12px 24px; font-size: 0.9rem; }
+
+            /* KPI cards */
+            .kpi-card { padding: 14px; border-radius: 10px; }
+            .kpi-value { font-size: 1.4rem; }
+            .kpi-label { font-size: 0.72rem; }
+
+            /* Definition list */
+            .definition-item { padding: 12px 14px; }
+            .definition-term { font-size: 0.82rem; }
+            .definition-desc { font-size: 0.78rem; }
+
+            /* Glossary tooltip — position below on mobile */
+            .glossary-tip { width: 200px; font-size: 0.72rem; }
+
+            /* Sparkline */
+            .sparkline-row { gap: 8px; }
+
+            /* Source line */
+            .source-line { font-size: 0.62rem; }
+
+            /* Mini stat */
+            .mini-stat { padding: 12px; }
+            .mini-stat-value { font-size: 1.2rem; }
+            .mini-stat-label { font-size: 0.68rem; }
+
+            /* Scrollbar — thinner on mobile */
+            ::-webkit-scrollbar { width: 4px; }
+        }
+
+        /* Responsive — Small phones */
+        @media (max-width: 420px) {
+            .header-actions { flex-wrap: wrap; justify-content: center; }
+            .key-findings-row { grid-template-columns: 1fr; }
+            .severity-strip { grid-template-columns: 1fr; }
+            .regional-stats { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: 1fr; }
+            .mini-stats-row { grid-template-columns: 1fr; }
+            .welcome-grid { grid-template-columns: 1fr; }
+            .content { padding: 12px 10px; }
+            .section-progress { margin: -12px -10px 24px -10px; padding: 0 6px; }
+            .content-group { padding: 14px 10px 18px 10px; }
         }
 
         /* Scrollbar */
@@ -1558,7 +1783,7 @@
         <div class="header-actions">
             <button class="home-btn" onclick="showWelcome()">
                 <span class="material-symbols-outlined">home</span>
-                Home
+                <span>Home</span>
             </button>
             <div class="view-toggle">
                 <button class="view-btn active" data-view="compare">Compare</button>
@@ -1566,10 +1791,14 @@
             </div>
             <button class="export-btn" id="exportBriefBtn">
                 <span class="material-symbols-outlined">download</span>
-                Export Brief
+                <span>Export Brief</span>
+            </button>
+            <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Open menu">
+                <span class="material-symbols-outlined">menu</span>
             </button>
         </div>
     </header>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
 
     <div class="main-container">
         <nav class="sidebar">
@@ -4721,6 +4950,13 @@
             navigateToSection('overview');
         }
 
+        function toggleMobileSidebar() {
+            var sidebar = document.querySelector('.sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
+        }
+
         function showWelcome() {
             document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
             document.getElementById('welcome-screen').classList.add('active');
@@ -4733,6 +4969,12 @@
         }
 
         function navigateToSection(sectionId) {
+            // Close mobile sidebar if open
+            var sidebar = document.querySelector('.sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.remove('mobile-open');
+            if (overlay) overlay.classList.remove('active');
+
             document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
             var target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
