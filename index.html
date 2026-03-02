@@ -1484,14 +1484,24 @@
 
         /* Responsive — Mobile */
         @media (max-width: 768px) {
-            /* Header */
-            .header { padding: 10px 14px; gap: 8px; flex-wrap: wrap; }
-            .header-left { flex: 1; min-width: 0; }
+            /* Header — two rows: brand top, actions bottom */
+            .header {
+                padding: 10px 14px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .header-left { width: 100%; }
             .header-brand { gap: 8px; }
             .header-brand svg { width: 28px; height: 28px; flex-shrink: 0; }
             .header-title-main { font-size: 0.92rem; }
             .header-title-sub { font-size: 0.62rem; }
-            .header-actions { gap: 6px; }
+            .header-actions {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                gap: 6px;
+            }
             .view-btn { padding: 6px 10px; font-size: 0.75rem; }
             .export-btn { padding: 6px 10px; font-size: 0.75rem; }
             .export-btn span:not(.material-symbols-outlined) { display: none; }
@@ -1510,169 +1520,198 @@
                 transition: left 0.3s ease;
                 padding-top: 16px;
             }
-            .sidebar.mobile-open {
-                left: 0;
-            }
+            .sidebar.mobile-open { left: 0; }
 
-            /* Content area */
+            /* Content area — full width, natural scroll */
+            .main-container { display: block; }
             .content {
                 max-width: 100%;
+                width: 100%;
                 padding: 16px 14px;
+                overflow-y: visible;
                 scroll-padding-top: 50px;
             }
-            .main-container { display: block; }
 
             /* Section progress bar */
             .section-progress {
-                margin: -16px -14px 32px -14px;
-                padding: 0 10px;
+                margin: -16px -14px 28px -14px;
+                padding: 0 8px;
             }
-            .progress-dot { padding: 10px 10px; font-size: 0.68rem; }
+            .progress-dot { padding: 10px 8px; font-size: 0.65rem; }
 
             /* Section headers */
             .section-header {
                 flex-direction: column;
-                gap: 12px;
-                margin-top: 24px;
-                margin-bottom: 20px;
+                gap: 10px;
+                margin-top: 20px;
+                margin-bottom: 16px;
             }
-            .section-title { font-size: 1.25rem; }
+            .section-title { font-size: 1.15rem; }
+            .section-subtitle { font-size: 0.8rem; }
             .selected-communities { justify-content: flex-start; }
+            .community-tag { font-size: 0.7rem; padding: 3px 8px; }
 
-            /* Grids — stack on mobile */
-            .key-findings-row { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .regional-stats { grid-template-columns: 1fr 1fr; gap: 12px; }
+            /* Grids — single column on portrait phones */
+            .key-findings-row { grid-template-columns: 1fr; gap: 10px; }
+            .regional-stats { grid-template-columns: 1fr 1fr; gap: 10px; }
             .mini-stats-row { grid-template-columns: 1fr 1fr; gap: 10px; }
             .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .severity-strip { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .charts-row { grid-template-columns: 1fr; gap: 16px; }
-            .insights-grid { grid-template-columns: 1fr; gap: 12px; }
+            .severity-strip { grid-template-columns: 1fr; gap: 10px; }
+            .charts-row { grid-template-columns: 1fr; gap: 14px; }
+            .insights-grid { grid-template-columns: 1fr; gap: 10px; }
 
-            /* Key findings cards */
-            .key-finding { padding: 16px 14px; border-radius: 10px; }
-            .finding-figure { font-size: 1.6rem; }
-            .finding-label { font-size: 0.6rem; }
-            .finding-context { font-size: 0.72rem; }
+            /* Key findings cards — full width, horizontal layout */
+            .key-finding { padding: 16px; border-radius: 10px; }
+            .finding-figure { font-size: 1.8rem; }
+            .finding-label { font-size: 0.62rem; }
+            .finding-context { font-size: 0.75rem; }
 
             /* Regional summary */
-            .regional-summary { padding: 16px; margin-bottom: 16px; }
-            .regional-stat-value { font-size: 1.5rem; }
+            .regional-summary { padding: 14px; margin-bottom: 14px; border-radius: 10px; }
+            .regional-summary-title { font-size: 0.9rem; }
+            .regional-stat-value { font-size: 1.4rem; }
+            .regional-stat-label { font-size: 0.7rem; }
 
             /* Charts */
-            .chart-container { padding: 14px; }
-            .chart-wrapper { height: 220px; }
-            .chart-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .chart-container { padding: 12px; border-radius: 10px; }
+            .chart-wrapper { height: 200px; }
+            .chart-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+            .chart-title { font-size: 0.88rem; }
 
             /* Tables — horizontal scroll */
-            .comparison-table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            .comparison-table { min-width: 500px; }
-            .comparison-table th { padding: 10px 10px; font-size: 0.72rem; }
-            .comparison-table td { padding: 10px 10px; font-size: 0.8rem; }
+            .comparison-table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+            .comparison-table { min-width: 480px; }
+            .comparison-table th { padding: 8px 10px; font-size: 0.68rem; }
+            .comparison-table td { padding: 8px 10px; font-size: 0.78rem; }
+            .table-header-bar { padding: 12px 14px; }
+            .table-title { font-size: 0.88rem; }
 
             /* Content groups */
-            .content-group { padding: 18px 14px 22px 14px; margin-bottom: 16px; }
-            .group-title { font-size: 0.95rem; }
-            .group-subtitle { padding-left: 0; font-size: 0.82rem; }
-            .group-header .material-symbols-outlined { font-size: 22px; }
+            .content-group { padding: 14px 12px 18px 12px; margin-bottom: 14px; border-radius: 10px; }
+            .group-title { font-size: 0.92rem; }
+            .group-subtitle { padding-left: 0; font-size: 0.78rem; }
+            .group-header .material-symbols-outlined { font-size: 20px; }
+            .group-header { gap: 6px 8px; margin-bottom: 14px; }
 
             /* Map */
-            #housingMap { height: 300px !important; }
+            #housingMap { height: 280px !important; }
             #mapControls { flex-direction: column; align-items: flex-start !important; gap: 8px; }
             .map-legend { max-width: 100%; min-width: unset; }
             .map-layer-toggle { flex-wrap: wrap; }
-            .map-layer-btn { padding: 6px 10px; font-size: 0.68rem; }
+            .map-layer-btn { padding: 5px 8px; font-size: 0.65rem; }
 
             /* Single community view */
             .single-community-header {
                 flex-direction: column;
                 align-items: flex-start;
-                padding: 20px 18px;
-                gap: 14px;
+                padding: 18px 16px;
+                gap: 12px;
                 border-radius: 12px;
             }
-            .community-avatar { width: 48px; height: 48px; font-size: 1.2rem; border-radius: 10px; }
-            .community-info h2 { font-size: 1.15rem; }
-            .community-info p { font-size: 0.8rem; }
+            .community-avatar { width: 44px; height: 44px; font-size: 1.1rem; border-radius: 10px; }
+            .community-info h2 { font-size: 1.1rem; }
+            .community-info p { font-size: 0.78rem; }
 
             /* Executive sections */
-            .exec-section { margin-bottom: 24px; padding-bottom: 20px; }
-            .exec-section-head { padding: 10px 12px; border-radius: 10px; }
-            .exec-section-icon { width: 34px; height: 34px; border-radius: 8px; }
-            .exec-section-icon .material-symbols-outlined { font-size: 17px; }
-            .exec-section-title { font-size: 0.95rem; }
-            .exec-narrative { padding: 10px 14px; font-size: 0.85rem; }
+            .exec-section { margin-bottom: 20px; padding-bottom: 16px; }
+            .exec-section-head { padding: 10px 10px; border-radius: 8px; }
+            .exec-section-icon { width: 32px; height: 32px; border-radius: 8px; }
+            .exec-section-icon .material-symbols-outlined { font-size: 16px; }
+            .exec-section-title { font-size: 0.88rem; }
+            .exec-narrative { padding: 10px 12px; font-size: 0.82rem; line-height: 1.6; }
 
             /* Severity cards */
             .severity-card { padding: 14px; border-radius: 10px; }
-            .severity-value { font-size: 1.4rem; }
+            .severity-value { font-size: 1.5rem; }
             .severity-label { font-size: 0.65rem; }
-            .severity-context { font-size: 0.7rem; }
+            .severity-context { font-size: 0.72rem; }
+            .severity-badge { font-size: 0.6rem; padding: 2px 8px; }
 
             /* Action cards */
-            .action-card { padding: 12px 14px; gap: 10px; }
+            .action-card { padding: 10px 12px; gap: 10px; }
             .action-number { width: 24px; height: 24px; min-width: 24px; font-size: 0.7rem; }
-            .action-text { font-size: 0.82rem; }
+            .action-text { font-size: 0.8rem; line-height: 1.5; }
 
             /* Benchmark callout */
-            .benchmark-callout { font-size: 0.72rem; padding: 5px 12px; }
+            .benchmark-callout { font-size: 0.7rem; padding: 4px 10px; }
 
             /* Section summary */
-            .section-summary { padding: 16px 18px; font-size: 0.85rem; }
+            .section-summary { padding: 14px 16px; font-size: 0.82rem; border-radius: 0 8px 8px 0; }
 
             /* Chart insight */
-            .chart-insight { padding: 12px 14px; font-size: 0.82rem; }
+            .chart-insight { padding: 10px 12px; font-size: 0.8rem; }
 
             /* Welcome screen */
-            .welcome-hero { padding: 36px 14px 24px; }
-            .welcome-hero h1 { font-size: 1.5rem; }
-            .welcome-hero p { font-size: 0.9rem; }
-            .welcome-grid { grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 14px 20px; }
-            .welcome-card { padding: 20px 14px; border-radius: 10px; }
-            .welcome-card .material-symbols-outlined { font-size: 32px; }
-            .welcome-card-name { font-size: 1rem; }
-            .welcome-card-pop { font-size: 0.78rem; }
-            .welcome-compare-btn { padding: 12px 24px; font-size: 0.9rem; }
+            .welcome-hero { padding: 28px 14px 20px; }
+            .welcome-hero h1 { font-size: 1.35rem; }
+            .welcome-hero p { font-size: 0.85rem; }
+            .welcome-grid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 12px 16px; }
+            .welcome-card { padding: 18px 12px; border-radius: 10px; }
+            .welcome-card .material-symbols-outlined { font-size: 28px; margin-bottom: 10px; }
+            .welcome-card-name { font-size: 0.88rem; }
+            .welcome-card-pop { font-size: 0.72rem; }
+            .welcome-compare-btn { padding: 10px 20px; font-size: 0.85rem; }
 
             /* KPI cards */
-            .kpi-card { padding: 14px; border-radius: 10px; }
-            .kpi-value { font-size: 1.4rem; }
-            .kpi-label { font-size: 0.72rem; }
+            .kpi-card { padding: 12px; border-radius: 10px; }
+            .kpi-value { font-size: 1.3rem; }
+            .kpi-label { font-size: 0.68rem; }
 
             /* Definition list */
-            .definition-item { padding: 12px 14px; }
-            .definition-term { font-size: 0.82rem; }
-            .definition-desc { font-size: 0.78rem; }
+            .definition-item { padding: 10px 12px; }
+            .definition-term { font-size: 0.8rem; }
+            .definition-desc { font-size: 0.75rem; }
 
-            /* Glossary tooltip — position below on mobile */
-            .glossary-tip { width: 200px; font-size: 0.72rem; }
+            /* Glossary tooltip — smaller on mobile */
+            .glossary-tip { width: 180px; font-size: 0.68rem; }
 
             /* Sparkline */
-            .sparkline-row { gap: 8px; }
+            .sparkline-row { gap: 6px; }
 
             /* Source line */
-            .source-line { font-size: 0.62rem; }
+            .source-line { font-size: 0.6rem; }
 
             /* Mini stat */
-            .mini-stat { padding: 12px; }
-            .mini-stat-value { font-size: 1.2rem; }
-            .mini-stat-label { font-size: 0.68rem; }
+            .mini-stat { padding: 10px; border-radius: 8px; }
+            .mini-stat-value { font-size: 1.1rem; }
+            .mini-stat-label { font-size: 0.65rem; }
+
+            /* Insight cards */
+            .insight-card { padding: 14px 16px; }
+            .insight-title { font-size: 0.85rem; }
+            .insight-text { font-size: 0.78rem; }
+            .insight-value { font-size: 1.2rem; }
+            .insight-icon { width: 34px; height: 34px; margin-bottom: 8px; }
+
+            /* Prevent any horizontal overflow */
+            body { overflow-x: hidden; }
+            .section { overflow-x: hidden; }
 
             /* Scrollbar — thinner on mobile */
             ::-webkit-scrollbar { width: 4px; }
         }
 
-        /* Responsive — Small phones */
-        @media (max-width: 420px) {
-            .header-actions { flex-wrap: wrap; justify-content: center; }
-            .key-findings-row { grid-template-columns: 1fr; }
-            .severity-strip { grid-template-columns: 1fr; }
+        /* Responsive — Small phones (portrait iPhone SE, older Androids) */
+        @media (max-width: 380px) {
+            .header { padding: 8px 10px; gap: 6px; }
+            .header-title-main { font-size: 0.82rem; }
+            .header-title-sub { display: none; }
+            .header-actions { gap: 4px; }
+            .view-btn { padding: 5px 8px; font-size: 0.7rem; }
+            .mobile-menu-btn { width: 34px; height: 34px; }
+
+            .content { padding: 12px 10px; }
+            .section-progress { margin: -12px -10px 20px -10px; padding: 0 4px; }
+            .progress-dot { padding: 8px 6px; font-size: 0.6rem; }
+            .content-group { padding: 12px 10px 16px 10px; }
+
             .regional-stats { grid-template-columns: 1fr; }
             .kpi-grid { grid-template-columns: 1fr; }
             .mini-stats-row { grid-template-columns: 1fr; }
-            .welcome-grid { grid-template-columns: 1fr; }
-            .content { padding: 12px 10px; }
-            .section-progress { margin: -12px -10px 24px -10px; padding: 0 6px; }
-            .content-group { padding: 14px 10px 18px 10px; }
+
+            .section-title { font-size: 1.05rem; }
+            .welcome-grid { grid-template-columns: 1fr; gap: 8px; }
+            .welcome-hero h1 { font-size: 1.2rem; }
         }
 
         /* Scrollbar */
