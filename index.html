@@ -1439,6 +1439,8 @@
         .kpi-change.down { color: var(--danger); }
 
         /* Mobile menu toggle button */
+        .mobile-sidebar-close { display: none; }
+
         .mobile-menu-btn {
             display: none;
             align-items: center;
@@ -1508,19 +1510,37 @@
             .home-btn { padding: 6px 10px; font-size: 0.75rem; }
             .home-btn span:not(.material-symbols-outlined) { display: none; }
             .mobile-menu-btn { display: flex; }
+            .mobile-sidebar-close { display: flex; }
 
             /* Sidebar as drawer */
             .sidebar {
-                position: fixed;
-                top: 0;
+                position: fixed !important;
+                top: 0 !important;
                 left: -280px;
-                width: 270px;
-                height: 100vh;
-                z-index: 200;
+                width: 270px !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                z-index: 200 !important;
                 transition: left 0.3s ease;
                 padding-top: 16px;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.3);
             }
-            .sidebar.mobile-open { left: 0; }
+            .sidebar.mobile-open { left: 0 !important; }
+            .mobile-sidebar-close {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 16px;
+                margin: 0 12px 12px;
+                background: rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,255,255,0.15);
+                border-radius: 8px;
+                color: #fff;
+                font-family: 'Lato', sans-serif;
+                font-size: 0.82rem;
+                cursor: pointer;
+            }
+            .mobile-sidebar-close .material-symbols-outlined { font-size: 18px; color: #4FD1C5; }
 
             /* Content area — full width, natural scroll */
             .main-container { display: block; }
@@ -1841,6 +1861,9 @@
 
     <div class="main-container">
         <nav class="sidebar">
+            <button class="mobile-sidebar-close" onclick="toggleMobileSidebar()">
+                <span class="material-symbols-outlined">close</span> Close Menu
+            </button>
             <div class="sidebar-section">
                 <div class="sidebar-title">Select Communities</div>
                 <div class="select-actions">
@@ -3676,23 +3699,57 @@
         // Register datalabels plugin
         Chart.register(ChartDataLabels);
 
+        // Responsive chart sizing
+        var isMobile = window.innerWidth <= 768;
+        var isSmallMobile = window.innerWidth <= 420;
+        var chartFontBase = isSmallMobile ? 9 : (isMobile ? 10 : 12);
+        var chartDatalabelSize = isSmallMobile ? 8 : (isMobile ? 9 : 11);
+        var chartLegendSize = isSmallMobile ? 9 : (isMobile ? 10 : 12);
+        var chartTickSize = isSmallMobile ? 8 : (isMobile ? 9 : 11);
+
         // Default datalabels options - inside bars
         Chart.defaults.set('plugins.datalabels', {
             color: '#FFFFFF',
             font: {
                 family: 'Lato',
                 weight: '600',
-                size: 11
+                size: chartDatalabelSize
             },
             anchor: 'center',
-            align: 'center'
+            align: 'center',
+            display: function(context) {
+                // Hide datalabels on small mobile if bars are too narrow
+                if (isSmallMobile && context.chart.width < 300) {
+                    return context.dataIndex < 4;
+                }
+                return true;
+            }
         });
 
         // Global Chart.js defaults
         Chart.defaults.font.family = 'Lato';
-        Chart.defaults.font.size = 12;
-        Chart.defaults.datasets.bar.barPercentage = 0.7;
-        Chart.defaults.datasets.bar.categoryPercentage = 0.8;
+        Chart.defaults.font.size = chartFontBase;
+        Chart.defaults.datasets.bar.barPercentage = isMobile ? 0.8 : 0.7;
+        Chart.defaults.datasets.bar.categoryPercentage = isMobile ? 0.9 : 0.8;
+        // Responsive legend
+        Chart.defaults.plugins.legend.labels = Chart.defaults.plugins.legend.labels || {};
+        Chart.defaults.plugins.legend.labels.font = { size: chartLegendSize };
+        Chart.defaults.plugins.legend.labels.boxWidth = isMobile ? 10 : 14;
+        Chart.defaults.plugins.legend.labels.padding = isMobile ? 8 : 12;
+        // Responsive tick sizing
+        Chart.defaults.scales = Chart.defaults.scales || {};
+        // Responsive axis ticks
+        Chart.defaults.scales.category = Chart.defaults.scales.category || {};
+        Chart.defaults.scales.category.ticks = Chart.defaults.scales.category.ticks || {};
+        Chart.defaults.scales.category.ticks.font = { size: chartTickSize };
+        if (isMobile) {
+            Chart.defaults.scales.category.ticks.maxRotation = 45;
+            Chart.defaults.scales.category.ticks.autoSkip = true;
+            Chart.defaults.scales.category.ticks.maxTicksLimit = isSmallMobile ? 5 : 8;
+        }
+        Chart.defaults.scales.linear = Chart.defaults.scales.linear || {};
+        Chart.defaults.scales.linear.ticks = Chart.defaults.scales.linear.ticks || {};
+        Chart.defaults.scales.linear.ticks.font = { size: chartTickSize };
         // Disable legend click (prevents strikethrough/crossout on click)
         Chart.defaults.plugins.legend.onClick = function() {};
 
@@ -4992,8 +5049,16 @@
         function toggleMobileSidebar() {
             var sidebar = document.querySelector('.sidebar');
             var overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('mobile-open');
-            overlay.classList.toggle('active');
+            var isOpen = sidebar.classList.contains('mobile-open');
+            if (isOpen) {
+                sidebar.classList.remove('mobile-open');
+                sidebar.style.left = '';
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.add('mobile-open');
+                sidebar.style.left = '0px';
+                overlay.classList.add('active');
+            }
         }
 
         function showWelcome() {
@@ -5011,7 +5076,7 @@
             // Close mobile sidebar if open
             var sidebar = document.querySelector('.sidebar');
             var overlay = document.getElementById('sidebarOverlay');
-            if (sidebar) sidebar.classList.remove('mobile-open');
+            if (sidebar) { sidebar.classList.remove('mobile-open'); sidebar.style.left = ''; }
             if (overlay) overlay.classList.remove('active');
 
             document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
@@ -7658,7 +7723,7 @@
                             datalabels: {
                                 formatter: (value) => value + '%',
                                 color: '#fff',
-                                font: { size: 10 }
+                                font: { size: chartDatalabelSize }
                             }
                         },
                         scales: {
@@ -7723,7 +7788,7 @@
                             datalabels: {
                                 formatter: (value) => '$' + Math.round(value) + 'K',
                                 color: '#fff',
-                                font: { size: 10 }
+                                font: { size: chartDatalabelSize }
                             }
                         },
                         scales: {
@@ -7755,7 +7820,7 @@
                             datalabels: {
                                 formatter: (value) => '$' + Math.round(value) + 'K',
                                 color: '#fff',
-                                font: { size: 10 }
+                                font: { size: chartDatalabelSize }
                             }
                         },
                         scales: {
@@ -7804,7 +7869,7 @@
                             legend: { position: 'top' },
                             datalabels: {
                                 formatter: (value) => value + '%',
-                                font: { size: 9 },
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) },
                                 display: (context) => context.dataset.data[context.dataIndex] > 5
                             }
                         },
@@ -7846,7 +7911,7 @@
                             legend: { position: 'top' },
                             datalabels: {
                                 formatter: (value) => value.toLocaleString(),
-                                font: { size: 10 }
+                                font: { size: chartDatalabelSize }
                             }
                         },
                         scales: {
@@ -7878,7 +7943,7 @@
                             datalabels: {
                                 formatter: (value) => value > 1000 ? (value/1000).toFixed(1) + 'K' : value,
                                 color: '#fff',
-                                font: { size: 9 }
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) }
                             }
                         },
                         scales: {
@@ -7909,7 +7974,7 @@
                             legend: { position: 'top' },
                             datalabels: {
                                 formatter: (value) => Math.round(value) + '%',
-                                font: { size: 10 }
+                                font: { size: chartDatalabelSize }
                             }
                         },
                         scales: {
@@ -8002,7 +8067,7 @@
                             legend: { position: 'top' },
                             datalabels: {
                                 formatter: (value) => value > 500 ? (value/1000).toFixed(1) + 'K' : value,
-                                font: { size: 9 },
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) },
                                 display: (context) => context.datasetIndex === 0
                             }
                         },
@@ -8053,7 +8118,7 @@
                             legend: { position: 'top' },
                             datalabels: {
                                 formatter: (value) => '$' + (value/1000).toFixed(0) + 'K',
-                                font: { size: 9 },
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) },
                                 display: (context) => context.datasetIndex === 0
                             }
                         },
@@ -8107,7 +8172,7 @@
                             legend: { position: 'top' },
                             datalabels: {
                                 formatter: (value) => value + '%',
-                                font: { size: 9, weight: 'bold' },
+                                font: { size: chartDatalabelSize, weight: 'bold' },
                                 color: '#FFFFFF',
                                 display: true
                             }
@@ -8176,7 +8241,7 @@
                             datalabels: { 
                                 formatter: (value) => '$' + value.toLocaleString(),
                                 color: '#fff',
-                                font: { size: 11, weight: 'bold' }
+                                font: { size: chartDatalabelSize, weight: 'bold' }
                             }
                         },
                         scales: {
@@ -8209,7 +8274,7 @@
                             legend: { position: 'top' },
                             datalabels: { 
                                 formatter: (value) => '$' + value,
-                                font: { size: 8 },
+                                font: { size: Math.max(chartDatalabelSize - 2, 7) },
                                 display: (context) => context.datasetIndex === 3
                             }
                         },
@@ -8243,7 +8308,7 @@
                             legend: { position: 'top' },
                             datalabels: { 
                                 formatter: (value) => value,
-                                font: { size: 9 },
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) },
                                 display: (context) => context.dataIndex === 2
                             }
                         },
@@ -8329,7 +8394,7 @@
                             datalabels: {
                                 formatter: (value) => (value > 0 ? '+' : '') + value + ' pts',
                                 color: '#fff',
-                                font: { size: 9 }
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) }
                             }
                         },
                         scales: {
@@ -8377,7 +8442,7 @@
                             datalabels: {
                                 formatter: (value) => value.toLocaleString(),
                                 color: '#fff',
-                                font: { size: 10 }
+                                font: { size: chartDatalabelSize }
                             }
                         },
                         scales: {
@@ -8459,7 +8524,7 @@
                             datalabels: {
                                 formatter: (value) => '$' + Math.round(value) + 'K',
                                 color: '#fff',
-                                font: { size: 9 }
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) }
                             }
                         },
                         scales: {
@@ -8605,7 +8670,7 @@
                             datalabels: {
                                 formatter: (value) => '$' + value + 'K',
                                 color: '#fff',
-                                font: { size: 9 }
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) }
                             }
                         },
                         scales: {
@@ -8659,7 +8724,7 @@
                             datalabels: {
                                 formatter: (value) => '$' + value.toLocaleString(),
                                 color: '#fff',
-                                font: { size: 9 }
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) }
                             }
                         },
                         scales: {
@@ -8713,7 +8778,7 @@
                             datalabels: {
                                 formatter: (value) => value > 0 ? value.toLocaleString() : '',
                                 color: '#fff',
-                                font: { size: 9 }
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) }
                             }
                         },
                         scales: {
@@ -8761,7 +8826,7 @@
                             datalabels: {
                                 formatter: (value) => (value > 0 ? '+' : '') + value + ' pp',
                                 color: '#fff',
-                                font: { size: 9 }
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) }
                             }
                         },
                         scales: {
@@ -8835,7 +8900,7 @@
                             datalabels: {
                                 formatter: (value) => (value > 0 ? '+' : '') + '$' + value,
                                 color: '#fff',
-                                font: { size: 9 }
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) }
                             }
                         },
                         scales: {
@@ -8903,7 +8968,7 @@
                             datalabels: { 
                                 formatter: (value) => value.toLocaleString(),
                                 color: '#fff',
-                                font: { size: 11, weight: 'bold' }
+                                font: { size: chartDatalabelSize, weight: 'bold' }
                             }
                         },
                         scales: {
@@ -9014,7 +9079,7 @@
                             datalabels: {
                                 formatter: (value) => (value > 0 ? '+' : '') + value + ' pp',
                                 color: '#fff',
-                                font: { size: 9 }
+                                font: { size: Math.max(chartDatalabelSize - 1, 7) }
                             }
                         },
                         scales: {
@@ -9056,7 +9121,7 @@
                             datalabels: {
                                 formatter: (value) => value.toFixed(0) + '%',
                                 color: '#fff',
-                                font: { size: 10 }
+                                font: { size: chartDatalabelSize }
                             }
                         },
                         scales: {
