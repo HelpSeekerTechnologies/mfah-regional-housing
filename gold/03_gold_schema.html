@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MFAH Housing Dashboard — Gold Layer Schema</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep-navy: #0B1F33;
+    --midnight: #102A43;
+    --slate-blue: #1E3A5F;
+    --ocean: #2C5282;
+    --teal: #0FB9B1;
+    --aqua: #4FD1C5;
+    --pale-aqua: #E0F0EE;
+    --mist: #EDF5F4;
+    --near-black: #0A0A0A;
+    --text-secondary: #4A5568;
+    --border: #E5E7EB;
+    --bg-subtle: #F9FAFB;
+    --bg-secondary: #F3F4F6;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--white);
+    color: var(--near-black);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--deep-navy) 0%, var(--midnight) 100%);
+    padding: 28px 32px 24px;
+    color: var(--white);
+  }
+  .header h1 { font-weight: 700; font-size: 1.3rem; margin-bottom: 4px; }
+  .header p { font-weight: 300; font-size: 0.85rem; color: rgba(255,255,255,0.55); }
+
+  /* Summary strip */
+  .summary-strip {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-item {
+    flex: 1;
+    padding: 16px 20px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .summary-item:last-child { border-right: none; }
+  .summary-value { font-weight: 700; font-size: 1.4rem; }
+  .summary-label { font-weight: 300; font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Design rationale */
+  .rationale {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-subtle);
+  }
+  .rationale h2 { font-weight: 700; font-size: 0.9rem; color: var(--deep-navy); margin-bottom: 8px; }
+  .rationale p { font-size: 0.82rem; color: var(--near-black); line-height: 1.65; font-weight: 400; }
+  .rationale strong { font-weight: 700; }
+  .rationale code {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.78rem;
+    background: var(--bg-secondary);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    padding: 0 32px;
+  }
+  .tab-btn {
+    padding: 12px 20px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Lato', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--deep-navy); }
+  .tab-btn.active {
+    border-bottom-color: var(--teal);
+    background: rgba(15,185,177,0.03);
+    color: var(--teal);
+    font-weight: 700;
+  }
+
+  /* Content area */
+  .content { padding: 20px 32px 40px; }
+  .content-intro {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Table cards */
+  .table-card {
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: 0 1px 4px rgba(11,31,51,0.04);
+  }
+  .table-card-header {
+    padding: 14px 18px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .table-card-header:hover { background: var(--bg-subtle); }
+  .table-card.expanded .table-card-header { background: var(--bg-subtle); }
+  .table-card-info { flex: 1; }
+  .table-card-name {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--deep-navy);
+    font-family: 'Consolas', 'Monaco', monospace;
+  }
+  .table-card-meta {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-top: 2px;
+  }
+  .table-card-badge {
+    font-size: 0.7rem;
+    background: rgba(30,58,95,0.07);
+    color: var(--slate-blue);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    margin-left: 12px;
+  }
+  .table-card-chevron {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-left: 8px;
+    transition: transform 0.2s;
+  }
+  .table-card.expanded .table-card-chevron { transform: rotate(180deg); }
+
+  .table-card-body {
+    display: none;
+    padding: 0 18px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .table-card.expanded .table-card-body { display: block; }
+
+  .table-card-comment {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin: 12px 0 10px;
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  /* Column table */
+  .col-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .col-table th {
+    text-align: left;
+    padding: 6px 8px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+  }
+  .col-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .col-table tr:last-child td { border-bottom: none; }
+  .col-name {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.78rem;
+    color: var(--deep-navy);
+    font-weight: 400;
+  }
+  .col-name.key { font-weight: 700; }
+  .col-type {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+  .col-notes { font-size: 0.75rem; color: var(--text-secondary); font-weight: 300; }
+
+  .badge-pk {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 0.62rem;
+    background: var(--teal);
+    color: var(--white);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    vertical-align: middle;
+  }
+  .badge-fk {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 0.62rem;
+    background: var(--slate-blue);
+    color: var(--white);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    vertical-align: middle;
+  }
+
+  /* Null policy */
+  .null-rule {
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--teal);
+    background: var(--bg-subtle);
+    border-radius: 0 8px 8px 0;
+  }
+  .null-rule-table {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--deep-navy);
+    font-family: 'Consolas', 'Monaco', monospace;
+    margin-bottom: 4px;
+  }
+  .null-rule-text { font-size: 0.8rem; color: var(--near-black); font-weight: 300; line-height: 1.55; }
+
+  /* Data flow footer */
+  .flow-footer {
+    padding: 24px 32px;
+    background: var(--bg-subtle);
+    border-top: 1px solid var(--border);
+  }
+  .flow-footer h3 { font-weight: 700; font-size: 0.85rem; color: var(--deep-navy); margin-bottom: 10px; }
+  .flow-steps { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .flow-step {
+    font-size: 0.78rem;
+    color: var(--deep-navy);
+    background: var(--white);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-weight: 400;
+  }
+  .flow-arrow { color: var(--teal); font-weight: 700; font-size: 1rem; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .header { padding: 20px 16px 18px; }
+    .header h1 { font-size: 1.1rem; }
+    .summary-strip { flex-wrap: wrap; }
+    .summary-item { flex: 1 1 33%; min-width: 100px; padding: 12px 10px; }
+    .summary-item:nth-child(3) { border-right: none; }
+    .rationale, .content, .flow-footer { padding-left: 16px; padding-right: 16px; }
+    .tabs { padding: 0 16px; overflow-x: auto; }
+    .tab-btn { white-space: nowrap; font-size: 0.75rem; padding: 10px 14px; }
+    .col-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>MFAH Housing Dashboard — Gold Layer Schema</h1>
+  <p>client_projects.mfah · Star schema · 20 tables</p>
+</div>
+
+<!-- Summary strip -->
+<div class="summary-strip">
+  <div class="summary-item">
+    <div class="summary-value" style="color: var(--teal)">3</div>
+    <div class="summary-label">Dimensions</div>
+  </div>
+  <div class="summary-item">
+    <div class="summary-value" style="color: var(--slate-blue)">7</div>
+    <div class="summary-label">Snapshot facts</div>
+  </div>
+  <div class="summary-item">
+    <div class="summary-value" style="color: var(--deep-navy)">10</div>
+    <div class="summary-label">Time-series facts</div>
+  </div>
+  <div class="summary-item">
+    <div class="summary-value" style="color: var(--aqua)">7</div>
+    <div class="summary-label">Communities</div>
+  </div>
+  <div class="summary-item">
+    <div class="summary-value" style="color: var(--text-secondary)">616</div>
+    <div class="summary-label">Source fields mapped</div>
+  </div>
+</div>
+
+<!-- Design rationale -->
+<div class="rationale">
+  <h2>Design rationale</h2>
+  <p>The current HTML packs ~200 fields per community into a single nested JavaScript object — a god entity. The gold layer decomposes it into a star schema: 3 shared dimensions and 17 fact tables split into <strong>point-in-time snapshots</strong> (one row per community, wide format) for static dashboard fields, and <strong>time-series tables</strong> (long format) for trend charts and historical comparisons. Snapshot tables map 1:1 to dashboard sections. Time-series tables are normalized so each row carries one observation — no pivoted year columns like <code>ei2016, ei2017, ei2018...</code>. The HTML build step pivots these back into the <code>communityData{}</code> object at render time.</p>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="dimensions">Dimensions (3)</button>
+  <button class="tab-btn" data-tab="snapshots">Snapshot Facts (7)</button>
+  <button class="tab-btn" data-tab="timeseries">Time-series Facts (10)</button>
+  <button class="tab-btn" data-tab="nulls">Null Policy</button>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Dimensions -->
+  <div class="tab-panel active" id="panel-dimensions">
+    <p class="content-intro">Shared dimension tables referenced by all fact tables via foreign key. These are the backbone of the star schema — every fact row points back here.</p>
+
+    <div class="table-card" id="card-geography_dim">
+      <div class="table-card-header" onclick="toggleCard('geography_dim')">
+        <div class="table-card-info">
+          <div class="table-card-name">geography_dim</div>
+          <div class="table-card-meta">Derived · 7 rows</div>
+        </div>
+        <div class="table-card-badge">All sections</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | 7 MFAH CSD communities with geocodes and coordinates. Source: Census 2021, HART HNA reports.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-pk">PK</span></span></td><td class="col-type">STRING</td><td class="col-notes">StatCan CSD code (e.g. 4806021)</td></tr>
+            <tr><td><span class="col-name">geography</span></td><td class="col-type">STRING</td><td class="col-notes">Community name (e.g. Airdrie)</td></tr>
+            <tr><td><span class="col-name">geography_type</span></td><td class="col-type">STRING</td><td class="col-notes">Always 'CSD' for this project</td></tr>
+            <tr><td><span class="col-name">geography_key</span></td><td class="col-type">STRING</td><td class="col-notes">Dashboard lookup key (e.g. airdrie)</td></tr>
+            <tr><td><span class="col-name">latitude</span></td><td class="col-type">DOUBLE</td><td class="col-notes">Centroid latitude</td></tr>
+            <tr><td><span class="col-name">longitude</span></td><td class="col-type">DOUBLE</td><td class="col-notes">Centroid longitude</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-timeframe_dim">
+      <div class="table-card-header" onclick="toggleCard('timeframe_dim')">
+        <div class="table-card-info">
+          <div class="table-card-name">timeframe_dim</div>
+          <div class="table-card-meta">Derived · 20 rows</div>
+        </div>
+        <div class="table-card-badge">All sections</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Reference years spanning 2006–2025 for all time-series fact tables. Source: derived.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-pk">PK</span></span></td><td class="col-type">INT</td><td class="col-notes">Year as integer (e.g. 2021)</td></tr>
+            <tr><td><span class="col-name">timeframe</span></td><td class="col-type">STRING</td><td class="col-notes">Year label (e.g. '2021')</td></tr>
+            <tr><td><span class="col-name">timeframe_type</span></td><td class="col-type">STRING</td><td class="col-notes">census_year | fiscal_year | survey_year</td></tr>
+            <tr><td><span class="col-name">is_census_year</span></td><td class="col-type">BOOLEAN</td><td class="col-notes">True for 2006, 2011, 2016, 2021</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-source_dim">
+      <div class="table-card-header" onclick="toggleCard('source_dim')">
+        <div class="table-card-info">
+          <div class="table-card-name">source_dim</div>
+          <div class="table-card-meta">Derived · 12 rows</div>
+        </div>
+        <div class="table-card-badge">All sections</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Data provenance registry for all HNA sources. Source: HNA Full Validation CSV.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">source_id<span class="badge-pk">PK</span></span></td><td class="col-type">STRING</td><td class="col-notes">Short key (e.g. census_2021)</td></tr>
+            <tr><td><span class="col-name">source_name</span></td><td class="col-type">STRING</td><td class="col-notes">Display name (e.g. Census 2021)</td></tr>
+            <tr><td><span class="col-name">source_organization</span></td><td class="col-type">STRING</td><td class="col-notes">StatCan | CMHC | HART | ESDC | Alberta</td></tr>
+            <tr><td><span class="col-name">source_description</span></td><td class="col-type">STRING</td><td class="col-notes">One-line description</td></tr>
+            <tr><td><span class="col-name">refresh_cadence</span></td><td class="col-type">STRING</td><td class="col-notes">quinquennial | annual | monthly</td></tr>
+            <tr><td><span class="col-name">reference_url</span></td><td class="col-type">STRING</td><td class="col-notes">Canonical URL for source</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Snapshot Facts -->
+  <div class="tab-panel" id="panel-snapshots">
+    <p class="content-intro">One row per community. These feed the static fields in communityData{}.</p>
+
+    <div class="table-card" id="card-hna_demographics_csd_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_demographics_csd_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_demographics_csd_2021</div>
+          <div class="table-card-meta">Census 2021 · 1 row per community · ~7 rows</div>
+        </div>
+        <div class="table-card-badge">Regional Overview</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Population, households, growth, age distribution, tenure split, median income/rent. Star schema fact table. Source: census_csd_2021.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">pop_2016</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">pop_2021</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">growth_5yr_pct</span></td><td class="col-type">DECIMAL(5,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">growth_10yr_pct</span></td><td class="col-type">DECIMAL(5,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">households</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">dwellings</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">single_detached</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">tenant_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">median_income</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">median_rent</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">age_0_14_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">age_15_24_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">age_25_44_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">age_45_64_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">age_65plus_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_housing_indicators_csd_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_housing_indicators_csd_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_housing_indicators_csd_2021</div>
+          <div class="table-card-meta">Census 2021 + HART · 1 row per community · ~7 rows</div>
+        </div>
+        <div class="table-card-badge">Core Housing Need</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Core housing need, adequacy, suitability, affordability by tenure. Source: census_csd_2021 (Table 98-10-0248), hart_hna_2021.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">chn_total</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">chn_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">chn_owner_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">chn_owner_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">chn_renter_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">chn_renter_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">spending_30_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">deficit_total</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">inadequate_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">inadequate_owner_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">inadequate_renter_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">inadequate_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unsuitable_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unsuitable_owner_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unsuitable_renter_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unsuitable_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unaffordable_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unaffordable_owner_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unaffordable_renter_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unaffordable_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_income_categories_csd_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_income_categories_csd_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_income_categories_csd_2021</div>
+          <div class="table-card-meta">HART · 1 row per community x income tier (5 tiers x 7 = 35 rows) · ~35 rows</div>
+        </div>
+        <div class="table-card-badge">Affordability</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | HART 5-tier income breakdown with household counts and shelter thresholds. Source: hart_hna_2021 (page 3).</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">income_tier</span></td><td class="col-type">STRING</td><td class="col-notes">very_low | low | moderate | median | high</td></tr>
+            <tr><td><span class="col-name">household_pct</span></td><td class="col-type">DECIMAL(5,2)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">household_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">max_income</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">max_shelter_cost</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_housing_deficit_csd_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_housing_deficit_csd_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_housing_deficit_csd_2021</div>
+          <div class="table-card-meta">HART · 1 row per community x income tier x household size (5 x 5 x 7 = 175 rows) · ~175 rows</div>
+        </div>
+        <div class="table-card-badge">Affordability</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Affordable housing deficit by income tier x household size, with subsidized/unsubsidized split. Source: hart_hna_2021 (page 4).</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">income_tier</span></td><td class="col-type">STRING</td><td class="col-notes">very_low | low | moderate | median | high</td></tr>
+            <tr><td><span class="col-name">household_size</span></td><td class="col-type">STRING</td><td class="col-notes">p1 | p2 | p3 | p4 | p5plus</td></tr>
+            <tr><td><span class="col-name">deficit_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">deficit_unsubsidized</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">deficit_subsidized</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_rental_supply_csd_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_rental_supply_csd_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_rental_supply_csd_2021</div>
+          <div class="table-card-meta">HART + CMHC · 1 row per community · ~7 rows</div>
+        </div>
+        <div class="table-card-badge">Housing Supply</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Rental supply composition: primary/secondary, subsidized, below-market, co-op, affordable change 2016–2021. Source: hart_hna_2021 (pages 6, 9, 10).</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">total_rental</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">primary_rental</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">primary_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">secondary_rental</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">secondary_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">subsidized</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unsubsidized</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">subsidized_pct</span></td><td class="col-type">DECIMAL(5,2)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">below_market</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">below_market_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">co_op_units</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">affordable_built_2016_2021</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">affordable_lost_2016_2021</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">affordable_net_change</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_priority_groups_csd_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_priority_groups_csd_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_priority_groups_csd_2021</div>
+          <div class="table-card-meta">HART · 1 row per community x priority group (16 x 7 = 112 rows) · ~112 rows</div>
+        </div>
+        <div class="table-card-badge">Priority Populations</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | 16 priority population subgroups with CHN count and rate. Source: hart_hna_2021 (page 5).</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">priority_group</span></td><td class="col-type">STRING</td><td class="col-notes">single_mothers | hh_over_65 | indigenous | refugees | ... (16 groups)</td></tr>
+            <tr><td><span class="col-name">chn_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">chn_rate</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_economic_snapshot_csd_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_economic_snapshot_csd_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_economic_snapshot_csd_2021</div>
+          <div class="table-card-meta">Census 2021 · 1 row per community · ~7 rows</div>
+        </div>
+        <div class="table-card-badge">Economic Indicators</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Unemployment, low income (LIM-AT), commuter flows. Source: census_csd_2021, ei_recipients.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">unemployment_rate_2021</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">low_income_lim_all</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">low_income_lim_0_17</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">low_income_lim_18_64</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">low_income_lim_65plus</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">avg_sale_price</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">owner_income</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">renter_income</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">net_commuter_flow_2011</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">net_commuter_flow_2016</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">net_commuter_flow_2021</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">commuter_flow_change_pct</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time-series Facts -->
+  <div class="tab-panel" id="panel-timeseries">
+    <p class="content-intro">One row per community x year (x category where applicable). These feed the trend charts and historical tables.</p>
+
+    <div class="table-card" id="card-hna_structure_type_csd_2006_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_structure_type_csd_2006_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_structure_type_csd_2006_2021</div>
+          <div class="table-card-meta">Census Historical · 1 row per community x year x structure type · ~196 rows</div>
+        </div>
+        <div class="table-card-badge">Housing Supply</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Dwelling counts by structure type across census years. Source: census_csd_2006, census_csd_2011, census_csd_2016, census_csd_2021.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">structure_type</span></td><td class="col-type">STRING</td><td class="col-notes">single_detached | semi_detached | row | duplex | low_rise | high_rise | other</td></tr>
+            <tr><td><span class="col-name">dwelling_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_shelter_cost_csd_2006_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_shelter_cost_csd_2006_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_shelter_cost_csd_2006_2021</div>
+          <div class="table-card-meta">Census Historical · 1 row per community x year x cost band · ~168 rows</div>
+        </div>
+        <div class="table-card-badge">Affordability</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Household counts by shelter cost band across census years. Source: census_csd_2006–2021.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">cost_band</span></td><td class="col-type">STRING</td><td class="col-notes">under_500 | r500_999 | r1000_1499 | r1500_1999 | r2000_plus</td></tr>
+            <tr><td><span class="col-name">household_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_income_distribution_csd_2006_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_income_distribution_csd_2006_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_income_distribution_csd_2006_2021</div>
+          <div class="table-card-meta">Census Historical · 1 row per community x year x tenure x income band · ~588 rows</div>
+        </div>
+        <div class="table-card-badge">Affordability</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Household counts by income band x tenure across census years. Source: census_csd_2006–2021.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">tenure</span></td><td class="col-type">STRING</td><td class="col-notes">owner | renter | total</td></tr>
+            <tr><td><span class="col-name">income_band</span></td><td class="col-type">STRING</td><td class="col-notes">under_20k | r20k_40k | r40k_60k | r60k_80k | r80k_100k | over_100k</td></tr>
+            <tr><td><span class="col-name">household_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_dwelling_values_csd_2006_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_dwelling_values_csd_2006_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_dwelling_values_csd_2006_2021</div>
+          <div class="table-card-meta">Census Historical · 1 row per community x year x structure type · ~224 rows</div>
+        </div>
+        <div class="table-card-badge">Affordability</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Average dwelling value by structure type across census years. Source: census_csd_2006–2021.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">structure_type</span></td><td class="col-type">STRING</td><td class="col-notes">single_detached | semi_detached | row | duplex | low_rise | high_rise | other | total</td></tr>
+            <tr><td><span class="col-name">avg_dwelling_value</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_median_income_csd_2006_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_median_income_csd_2006_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_median_income_csd_2006_2021</div>
+          <div class="table-card-meta">Census Historical · 1 row per community x year x tenure x measure · ~168 rows</div>
+        </div>
+        <div class="table-card-badge">Affordability</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Median and average income by tenure across census years. Source: census_csd_2006–2021.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">tenure</span></td><td class="col-type">STRING</td><td class="col-notes">owner | renter | total</td></tr>
+            <tr><td><span class="col-name">median_income</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">avg_income</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-cmhc_rental_market_csd_2016_2025">
+      <div class="table-card-header" onclick="toggleCard('cmhc_rental_market_csd_2016_2025')">
+        <div class="table-card-info">
+          <div class="table-card-name">cmhc_rental_market_csd_2016_2025</div>
+          <div class="table-card-meta">CMHC + HART · 1 row per community x year · ~70 rows</div>
+        </div>
+        <div class="table-card-badge">Rental Market</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Vacancy rates, average rents by bedroom type, rent YoY change. Source: cmhc_rms_csd_2016_2025, hart_hna_2021 (pages 7–8).</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">vacancy_rate</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes">NULL if suppressed</td></tr>
+            <tr><td><span class="col-name">avg_rent</span></td><td class="col-type">INT</td><td class="col-notes">Overall average rent (HART history)</td></tr>
+            <tr><td><span class="col-name">rent_bachelor</span></td><td class="col-type">INT</td><td class="col-notes">NULL if suppressed</td></tr>
+            <tr><td><span class="col-name">rent_1bed</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">rent_2bed</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">rent_3bed</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">rent_yoy_change</span></td><td class="col-type">INT</td><td class="col-notes">Dollar change from prior year</td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-cmhc_housing_starts_csd_2016_2024">
+      <div class="table-card-header" onclick="toggleCard('cmhc_housing_starts_csd_2016_2024')">
+        <div class="table-card-info">
+          <div class="table-card-name">cmhc_housing_starts_csd_2016_2024</div>
+          <div class="table-card-meta">CMHC + HART · 1 row per community x year x dimension type x category · ~504 rows</div>
+        </div>
+        <div class="table-card-badge">Rental Market</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Housing starts by structure type and by intended tenure. Source: cmhc_starts_csd_2016_2024, hart_hna_2021 (page 11).</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">dimension_type</span></td><td class="col-type">STRING</td><td class="col-notes">structure_type | tenure</td></tr>
+            <tr><td><span class="col-name">category</span></td><td class="col-type">STRING</td><td class="col-notes">apartment | row | semi_detached | single_detached | condo | owner | rental</td></tr>
+            <tr><td><span class="col-name">starts_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_chn_tenure_csd_2016_2021">
+      <div class="table-card-header" onclick="toggleCard('hna_chn_tenure_csd_2016_2021')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_chn_tenure_csd_2016_2021</div>
+          <div class="table-card-meta">HART · 1 row per community x year x tenure · ~28 rows</div>
+        </div>
+        <div class="table-card-badge">Core Housing Need</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Core housing need by tenure comparing 2016 and 2021. Source: hart_hna_2021 (page 9).</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">tenure</span></td><td class="col-type">STRING</td><td class="col-notes">owner | renter</td></tr>
+            <tr><td><span class="col-name">chn_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">chn_rate</span></td><td class="col-type">DECIMAL(4,1)</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-ei_recipients_csd_2016_2024">
+      <div class="table-card-header" onclick="toggleCard('ei_recipients_csd_2016_2024')">
+        <div class="table-card-info">
+          <div class="table-card-name">ei_recipients_csd_2016_2024</div>
+          <div class="table-card-meta">ESDC · 1 row per community x year · ~63 rows</div>
+        </div>
+        <div class="table-card-badge">Economic Indicators</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Employment Insurance recipient counts. Source: ei_recipients_csd_2016_2024.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">recipient_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card" id="card-hna_building_permits_csd_2016_2024">
+      <div class="table-card-header" onclick="toggleCard('hna_building_permits_csd_2016_2024')">
+        <div class="table-card-info">
+          <div class="table-card-name">hna_building_permits_csd_2016_2024</div>
+          <div class="table-card-meta">Alberta · 1 row per community x year x permit sector · ~315 rows</div>
+        </div>
+        <div class="table-card-badge">Economic Indicators</div>
+        <span class="material-symbols-outlined table-card-chevron">expand_more</span>
+      </div>
+      <div class="table-card-body">
+        <div class="table-card-comment">Gold | Building permits by sector: count and value. Source: Alberta Regional Dashboard.</div>
+        <table class="col-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="col-name key">geography_id<span class="badge-fk">FK → geography_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name key">timeframe_id<span class="badge-fk">FK → timeframe_dim</span></span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">permit_sector</span></td><td class="col-type">STRING</td><td class="col-notes">residential | commercial | industrial | institutional</td></tr>
+            <tr><td><span class="col-name">permit_count</span></td><td class="col-type">INT</td><td class="col-notes"></td></tr>
+            <tr><td><span class="col-name">permit_value</span></td><td class="col-type">INT</td><td class="col-notes">Dollar value; NULL where not available</td></tr>
+            <tr><td><span class="col-name key">source_id<span class="badge-fk">FK → source_dim</span></span></td><td class="col-type">STRING</td><td class="col-notes"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Null Policy -->
+  <div class="tab-panel" id="panel-nulls">
+    <p class="content-intro">Business rules for null handling per your gold benchmark criteria. Every table defaults to: NULLs on FK columns = referential integrity failure. NULLs on measure columns follow table-specific rules below.</p>
+
+    <div class="null-rule">
+      <div class="null-rule-table">All snapshot tables</div>
+      <div class="null-rule-text">No NULLs on geography_id or source_id. NULL indicator_values are suppressed rows — keep NULL, flag with companion _is_suppressed column only where Census suppression applies.</div>
+    </div>
+    <div class="null-rule">
+      <div class="null-rule-table">cmhc_rental_market</div>
+      <div class="null-rule-text">NULL for rent_bachelor where CMHC suppresses (small sample). Vacancy NULL for years without CMHC survey coverage.</div>
+    </div>
+    <div class="null-rule">
+      <div class="null-rule-table">hna_housing_deficit</div>
+      <div class="null-rule-text">Zero-fill: deficit_count = 0 means no deficit in that cell, not missing data.</div>
+    </div>
+    <div class="null-rule">
+      <div class="null-rule-table">hna_building_permits</div>
+      <div class="null-rule-text">NULL for permit_value in years where only counts are available. NULL for entire rows where community didn't report.</div>
+    </div>
+    <div class="null-rule">
+      <div class="null-rule-table">hna_priority_groups</div>
+      <div class="null-rule-text">Zero-fill for suppressed small counts (count=0, rate=0.0) per HART convention.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Data flow footer -->
+<div class="flow-footer">
+  <h3>Data flow: Gold → Dashboard</h3>
+  <div class="flow-steps">
+    <span class="flow-step">Gold tables (Databricks)</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Export to JSON / query via API</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Build script pivots time-series → communityData{}</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">HTML renders from object</span>
+  </div>
+</div>
+
+<script>
+function toggleCard(name) {
+  var card = document.getElementById('card-' + name);
+  if (card) card.classList.toggle('expanded');
+}
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
