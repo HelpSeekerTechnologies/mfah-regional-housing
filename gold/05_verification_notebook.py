@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # MFAH Gold Layer — Data Verification Notebook
+# MAGIC # MFAH Gold Layer - Data Verification Notebook
 # MAGIC **Purpose:** Mirror every section of the [MFAH Regional Housing Dashboard](https://helpseekertechnologies.github.io/mfah-regional-housing/) using gold layer tables.
 # MAGIC Compare each cell's output against the corresponding dashboard section to verify data accuracy.
 # MAGIC
@@ -10,7 +10,7 @@
 
 # MAGIC %md
 # MAGIC ## 1. Regional Overview
-# MAGIC *Dashboard section: Overview — KPI cards + community selector*
+# MAGIC *Dashboard section: Overview - KPI cards + community selector*
 
 # COMMAND ----------
 
@@ -50,7 +50,7 @@
 
 # MAGIC %md
 # MAGIC ## 2. Core Housing Need
-# MAGIC *Dashboard section: Housing Need — CHN KPIs, tenure comparison, housing indicators*
+# MAGIC *Dashboard section: Housing Need - CHN KPIs, tenure comparison, housing indicators*
 
 # COMMAND ----------
 
@@ -101,7 +101,7 @@
 
 # MAGIC %md
 # MAGIC ## 3. Affordability
-# MAGIC *Dashboard section: Affordability — income categories, shelter costs, deficit*
+# MAGIC *Dashboard section: Affordability - income categories, shelter costs, deficit*
 
 # COMMAND ----------
 
@@ -187,7 +187,7 @@
 
 # MAGIC %md
 # MAGIC ## 4. Housing Supply
-# MAGIC *Dashboard section: Supply — rental composition, structure types, dwelling values*
+# MAGIC *Dashboard section: Supply - rental composition, structure types, dwelling values*
 
 # COMMAND ----------
 
@@ -244,7 +244,7 @@
 
 # MAGIC %md
 # MAGIC ## 5. Growth Trends
-# MAGIC *Dashboard section: Growth — population growth rates, structure type trends*
+# MAGIC *Dashboard section: Growth - population growth rates, structure type trends*
 
 # COMMAND ----------
 
@@ -277,7 +277,7 @@
 
 # MAGIC %md
 # MAGIC ## 6. Economic Indicators
-# MAGIC *Dashboard section: Economic — unemployment, EI, commuting, building permits*
+# MAGIC *Dashboard section: Economic - unemployment, EI, commuting, building permits*
 
 # COMMAND ----------
 
@@ -328,7 +328,7 @@
 
 # MAGIC %md
 # MAGIC ## 7. Rental Market
-# MAGIC *Dashboard section: Rental Market — vacancy, rents, housing starts*
+# MAGIC *Dashboard section: Rental Market - vacancy, rents, housing starts*
 
 # COMMAND ----------
 
@@ -405,7 +405,7 @@
 
 # MAGIC %md
 # MAGIC ## 8. Priority Populations
-# MAGIC *Dashboard section: Priority — CHN rates by vulnerable group*
+# MAGIC *Dashboard section: Priority - CHN rates by vulnerable group*
 
 # COMMAND ----------
 
@@ -424,7 +424,7 @@
 
 # MAGIC %md
 # MAGIC ## 9. Data Quality Summary
-# MAGIC *Cross-checks and completeness — not in the dashboard, but validates the gold layer*
+# MAGIC *Cross-checks and completeness - not in the dashboard, but validates the gold layer*
 
 # COMMAND ----------
 
