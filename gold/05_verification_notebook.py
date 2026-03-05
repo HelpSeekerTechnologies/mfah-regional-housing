@@ -810,6 +810,76 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ### 6.4 Labour Force by Industry (Census 2021)
+# MAGIC *Top NAICS sectors by employment count. Source: public_data.census.census_csd_2021*
+
+# COMMAND ----------
+
+# Chart 6.4: Labour Force by Industry (Top 8 NAICS sectors)
+naics_industries = [
+    '44-45 Retail trade',
+    '23 Construction',
+    '62 Health care and social assistance',
+    '54 Professional, scientific and technical services',
+    '48-49 Transportation and warehousing',
+    '21 Mining, quarrying, and oil and gas extraction',
+    '61 Educational services',
+    '91 Public administration',
+    '72 Accommodation and food services',
+    '31-33 Manufacturing'
+]
+naics_str = ",".join([f"'{n}'" for n in naics_industries])
+
+df_industry = spark.sql(f"""
+  SELECT
+    CASE
+      WHEN g.geography LIKE '%Rocky View%' THEN 'Rocky View'
+      ELSE SPLIT(g.geography, ',')[0]
+    END AS community,
+    c.characteristic AS industry,
+    c.indicator_value AS workers
+  FROM public_data.census.census_csd_2021 c
+  JOIN public_data.housing.hna_geography_dim g ON c.geography_id = g.geography_id
+  WHERE c.characteristic IN ({naics_str})
+  ORDER BY community, workers DESC
+""").toPandas()
+
+if not df_industry.empty:
+    # Aggregate top 6 industries by total workers across all communities
+    top6 = df_industry.groupby('industry')['workers'].sum().nlargest(6).index.tolist()
+    df_top = df_industry[df_industry['industry'].isin(top6)]
+
+    # Shorten labels
+    short = {
+        '44-45 Retail trade': 'Retail',
+        '23 Construction': 'Construction',
+        '62 Health care and social assistance': 'Healthcare',
+        '54 Professional, scientific and technical services': 'Professional Svcs',
+        '48-49 Transportation and warehousing': 'Transportation',
+        '21 Mining, quarrying, and oil and gas extraction': 'Oil & Gas/Mining',
+        '61 Educational services': 'Education',
+        '91 Public administration': 'Public Admin',
+        '72 Accommodation and food services': 'Food & Accomm',
+        '31-33 Manufacturing': 'Manufacturing'
+    }
+    df_top['short'] = df_top['industry'].map(short).fillna(df_top['industry'])
+
+    pivot = df_top.pivot_table(index='short', columns='community', values='workers', fill_value=0)
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    colors = [SLATE, TEAL, AQUA, NAVY, '#2C5282', '#0E8C86', '#7EDDD5']
+    pivot.plot(kind='barh', ax=ax, color=colors[:len(pivot.columns)])
+    style_ax(ax, 'Labour Force by Industry - Top 6 NAICS Sectors (Census 2021)', ylabel='')
+    ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f'{x:,.0f}'))
+    ax.legend(fontsize=8, frameon=False, loc='lower right')
+    plt.tight_layout()
+    plt.show()
+else:
+    print("No Census industry data found. Check public_data.census.census_csd_2021 geography_id join.")
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ---
 # MAGIC ## 7. Priority Populations
 # MAGIC *CHN rates for 18 priority groups including youth, seniors, Indigenous, newcomers, and persons with disabilities (2021).*
